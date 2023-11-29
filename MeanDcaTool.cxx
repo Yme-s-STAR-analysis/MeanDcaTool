@@ -1,0 +1,109 @@
+#include <iostream>
+#include "TMath.h"
+#include "TF1.h"
+#include "StPicoEvent/StPicoDst.h"
+#include "StPicoEvent/StPicoEvent.h"
+#include "StPicoEvent/StPicoTrack.h"
+#include "StPicoDstMaker/StPicoDstMaker.h"
+#include "StThreeVectorF.hh"
+
+#include "MeanDcaTool.h"
+
+MeanDcaTool::MeanDcaTool() {
+    funcUpperZ = new TF1("z_upper", "[0]+[1]/pow(x, [2])", 1, 600);
+    funcUpperXY = new TF1("xy_upper", "[0]+[1]/pow(x, [2])", 1, 600);
+    funcLowerZ = new TF1("z_lower", "[0]+[1]/pow(x, [2])", 1, 600);
+    funcLowerXY = new TF1("xy_lower", "[0]+[1]/pow(x, [2])", 1, 600);
+    SetUpperCurveParZ(1.0, 1.0, 2.0);
+    SetUpperCurveParXY(1.0, 1.0, 2.0);
+    SetLowerCurveParZ(1.0, -1.0, 2.0);
+    SetLowerCurveParXY(1.0, -1.0, 2.0);
+    clean();
+}
+
+void MeanDcaTool::clean() {
+    haveCache = false;
+    mDCAz = 0;
+    mDCAxy = 0;
+    for (int i=0; i<N_MAX_DCA_TRACKS; i++) {
+        aDCAz[i] = 0;
+        aDCAxy[i] = 0;
+    }
+}
+
+void MeanDcaTool::SetUpperCurveParZ(double p0, double p1, double p2) {
+    funcUpperZ->SetParameters(p0, p1, p2);
+}
+void MeanDcaTool::SetUpperCurveParXY(double p0, double p1, double p2) {
+    funcUpperXY->SetParameters(p0, p1, p2);
+}
+void MeanDcaTool::SetLowerCurveParZ(double p0, double p1, double p2) {
+    funcLowerZ->SetParameters(p0, p1, p2);
+}
+void MeanDcaTool::SetLowerCurveParXY(double p0, double p1, double p2) {
+    funcLowerXY->SetParameters(p0, p1, p2);
+}
+
+
+bool MeanDcaTool::Make(StPicoDst *pico) {
+    int nTracks = pico->numberOfTracks();
+    if (nTracks> N_MAX_DCA_TRACKS) {
+        std::cout << "[WARNING] - From MeanDcaTool Number of tracks out of range: " << nTracks << " > " << N_MAX_DCA_TRACKS << ".\n";
+        return false;
+    }
+
+    int nTrk_valid = 0;
+    clean();
+    StPicoEvent* event = (StPicoEvent*)pico->event();
+    if (!event) { return false; }
+
+    TVector3 vertex = event->primaryVertex();
+    double vx = vertex.X();
+    double vy = vertex.Y();
+    double vz = vertex.Z();
+    double mField = event->bField();
+
+    for (int i=0; i<nTracks; i++) {
+        StPicoTrack* track = (StPicoTrack*)pico->track(i);
+        if (!track) { continue; }
+        if (!track->isPrimary()) { continue; }
+        aDCAz[nTrk_valid] = track->gDCAz(vz);
+        aDCAxy[nTrk_valid] = track->helix(mField).geometricSignedDistance(vx, vy);
+        nTrk_valid ++;
+    }
+
+    if (nTrk_valid == 0) { return false; }
+
+    for (int i=0; i<nTrk_valid; i++) {
+        mDCAz += aDCAz[i];
+        mDCAxy += aDCAxy[i];
+    }
+    mDCAz = mDCAz / nTrk_valid;
+    mDCAxy = mDCAxy / nTrk_valid;
+
+    haveCache = true;
+
+    return true;
+}
+
+bool MeanDcaTool::IsBadMeanDcaZEvent(StPicoDst* pico) {
+    bool res = true;
+    if (!haveCache) {
+        res = Make(pico);
+    }
+    if (!res) { return false; }
+    int refMult = pico->event()->refMult();
+    if (funcUpperZ->Eval(refMult) < mDCAz || funcLowerZ->Eval(refMult) > mDCAz) { return false; }
+    return true;
+}
+
+bool MeanDcaTool::IsBadMeanDcaXYEvent(StPicoDst* pico) {
+    bool res = true;
+    if (!haveCache) {
+        res = Make(pico);
+    }
+    if (!res) { return false; }
+    int refMult = pico->event()->refMult();
+    if (funcUpperXY->Eval(refMult) < mDCAxy || funcLowerXY->Eval(refMult) > mDCAxy) { return false; }
+    return true;
+}
