@@ -1,12 +1,16 @@
 # Mean DCA tool
 
-version: 2.0
+version: 2.0.1
 
 author: yghuang
 
 data: 29.11.2023
 
 ## Patch note
+
+29.11.2023 by yghuang (2.0.1):
+
+> Fix a fatal bug: IsBadDcaZ/XYEvent() was returning an incorrect boolean.
 
 29.11.2023 by yghuang (2.0):
 
