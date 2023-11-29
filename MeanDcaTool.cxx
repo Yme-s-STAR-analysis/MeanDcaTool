@@ -91,10 +91,10 @@ bool MeanDcaTool::IsBadMeanDcaZEvent(StPicoDst* pico) {
     if (!haveCache) {
         res = Make(pico);
     }
-    if (!res) { return false; }
+    if (!res) { return true; }
     int refMult = pico->event()->refMult();
-    if (funcUpperZ->Eval(refMult) < mDCAz || funcLowerZ->Eval(refMult) > mDCAz) { return false; }
-    return true;
+    if (funcUpperZ->Eval(refMult) < mDCAz || funcLowerZ->Eval(refMult) > mDCAz) { return true; }
+    return false;
 }
 
 bool MeanDcaTool::IsBadMeanDcaXYEvent(StPicoDst* pico) {
@@ -102,8 +102,8 @@ bool MeanDcaTool::IsBadMeanDcaXYEvent(StPicoDst* pico) {
     if (!haveCache) {
         res = Make(pico);
     }
-    if (!res) { return false; }
+    if (!res) { return true; }
     int refMult = pico->event()->refMult();
-    if (funcUpperXY->Eval(refMult) < mDCAxy || funcLowerXY->Eval(refMult) > mDCAxy) { return false; }
-    return true;
+    if (funcUpperXY->Eval(refMult) < mDCAxy || funcLowerXY->Eval(refMult) > mDCAxy) { return true; }
+    return false;
 }
