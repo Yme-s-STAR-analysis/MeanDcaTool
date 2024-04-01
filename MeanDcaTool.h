@@ -2,9 +2,9 @@
 #define __MEAN_DCA_TOOL__
 
 /*
-    Version: 2.0
+    Version: 2.1
     Author: yghuang
-    Date: 29.11.2023
+    Date: 01.04.2024
 */
 
 #define N_MAX_DCA_TRACKS 5000
@@ -42,6 +42,7 @@ class MeanDcaTool {
         void SetLowerCurveParZ(double, double, double);
         void SetUpperCurveParXY(double, double, double);
         void SetLowerCurveParXY(double, double, double);
+        void ReadParams(); // from header file
 
         // when you want to fill histogram or profile, use Make() and get mDCAz/xy
         bool Make(StPicoDst* pico); 
