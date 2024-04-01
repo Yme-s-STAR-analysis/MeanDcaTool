@@ -8,6 +8,7 @@
 #include "StThreeVectorF.hh"
 
 #include "MeanDcaTool.h"
+#include "MeanDcaParams.h"
 
 MeanDcaTool::MeanDcaTool() {
     funcUpperZ = new TF1("z_upper", "[0]+[1]/pow(x, [2])", 1, 600);
@@ -44,6 +45,34 @@ void MeanDcaTool::SetLowerCurveParXY(double p0, double p1, double p2) {
     funcLowerXY->SetParameters(p0, p1, p2);
 }
 
+void MeanDcaTool::ReadParams() {
+    std::cout << "[LOG] - From MeanDcaTool: Current data set shoule be: [" << DcaPars::dstName << "]\n";
+    std::cout << "[LOG] - From MeanDcaTool: Now reading mean DCA parameters:\n";
+    std::cout << "\t [DCAz] upper curve parameters: {" << DcaPars::DcaZUpperPars[0] << ", " << DcaPars::DcaZUpperPars[1] << ", " << DcaPars::DcaZUpperPars[2] << "}\n";
+    std::cout << "\t [DCAz] lower curve parameters: {" << DcaPars::DcaZLowerPars[0] << ", " << DcaPars::DcaZLowerPars[1] << ", " << DcaPars::DcaZLowerPars[2] << "}\n";
+    std::cout << "\t [sDCAxy] upper curve parameters: {" << DcaPars::DcaXYUpperPars[0] << ", " << DcaPars::DcaXYUpperPars[1] << ", " << DcaPars::DcaXYUpperPars[2] << "}\n";
+    std::cout << "\t [sDCAxy] lower curve parameters: {" << DcaPars::DcaXYLowerPars[0] << ", " << DcaPars::DcaXYLowerPars[1] << ", " << DcaPars::DcaXYLowerPars[2] << "}\n";
+    SetUpperCurveParZ(
+        DcaPars::DcaZUpperPars[0],
+        DcaPars::DcaZUpperPars[1],
+        DcaPars::DcaZUpperPars[2],
+    );
+    SetLowerCurveParZ(
+        DcaPars::DcaZLowerPars[0],
+        DcaPars::DcaZLowerPars[1],
+        DcaPars::DcaZLowerPars[2],
+    );
+    SetUpperCurveParXY(
+        DcaPars::DcaXYUpperPars[0],
+        DcaPars::DcaXYUpperPars[1],
+        DcaPars::DcaXYUpperPars[2],
+    );
+    SetLowerCurveParXY(
+        DcaPars::DcaXYLowerPars[0],
+        DcaPars::DcaXYLowerPars[1],
+        DcaPars::DcaXYLowerPars[2],
+    );
+}
 
 bool MeanDcaTool::Make(StPicoDst *pico) {
     int nTracks = pico->numberOfTracks();
