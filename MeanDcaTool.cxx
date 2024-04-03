@@ -55,22 +55,22 @@ void MeanDcaTool::ReadParams() {
     SetUpperCurveParZ(
         DcaPars::DcaZUpperPars[0],
         DcaPars::DcaZUpperPars[1],
-        DcaPars::DcaZUpperPars[2],
+        DcaPars::DcaZUpperPars[2]
     );
     SetLowerCurveParZ(
         DcaPars::DcaZLowerPars[0],
         DcaPars::DcaZLowerPars[1],
-        DcaPars::DcaZLowerPars[2],
+        DcaPars::DcaZLowerPars[2]
     );
     SetUpperCurveParXY(
         DcaPars::DcaXYUpperPars[0],
         DcaPars::DcaXYUpperPars[1],
-        DcaPars::DcaXYUpperPars[2],
+        DcaPars::DcaXYUpperPars[2]
     );
     SetLowerCurveParXY(
         DcaPars::DcaXYLowerPars[0],
         DcaPars::DcaXYLowerPars[1],
-        DcaPars::DcaXYLowerPars[2],
+        DcaPars::DcaXYLowerPars[2]
     );
 }
 
