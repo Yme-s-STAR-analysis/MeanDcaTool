@@ -8,6 +8,10 @@ data: 1.4.2024
 
 ## Patch note
 
+03.04.2024 by yghuang (v2.1.1):
+
+> Fix a bug: additional commas in ReadParams() are removed
+
 01.04.2024 by yghuang (v2.1):
 
 > DCA cuts are embedded in a parameter header
